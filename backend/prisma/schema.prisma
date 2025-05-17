@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Company {
+  id        Int         @id @default(autoincrement())
+  name      String
+  lat       Float
+  lng       Float
+  employees EmployeeCompany[]
+}
+
+model Employee {
+  id        Int         @id @default(autoincrement())
+  name      String
+  account   String      @unique
+  password  String
+  status    String      @default("active")
+  companies EmployeeCompany[]
+  records   Record[]
+}
+
+model EmployeeCompany {
+  id         Int      @id @default(autoincrement())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId Int
+  company    Company  @relation(fields: [companyId], references: [id])
+  companyId  Int
+}
+
+model Record {
+  id         Int      @id @default(autoincrement())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId Int
+  type       String   // Clock In / Clock Out / Leave
+  date       String
+  time       String
+  location   String
+  createdAt  DateTime @default(now())
+}
+
